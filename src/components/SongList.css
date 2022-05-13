@@ -1,0 +1,23 @@
+.song-list {
+  margin-top: 25px;
+}
+
+.song-list li {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.song-list li:not(:last-of-type) {
+  margin-bottom: 10px;
+}
+
+.song-list li .title {
+  color: white;
+}
+
+.song-list li .artist,
+.song-list li .duration {
+  color: #777;
+}

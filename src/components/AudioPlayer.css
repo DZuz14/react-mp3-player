@@ -1,0 +1,15 @@
+.audio-player {
+  background: #1b1c1e;
+  width: 600px;
+  margin: 0 auto;
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.audio-player > .title {
+  color: white;
+}
+
+.audio-player > .artist-info {
+  color: #777;
+}
