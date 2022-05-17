@@ -8,6 +8,7 @@
 
 .audio-player > .title {
   color: white;
+  font-weight: bold;
 }
 
 .audio-player > .artist-info {

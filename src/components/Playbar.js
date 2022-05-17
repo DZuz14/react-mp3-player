@@ -11,26 +11,32 @@ const formatTime = (inputSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
-const handleProgress = (currentTime, duration) =>
-  600 * (currentTime / duration);
+const handleProgress = (currentTime, duration) => {
+  if (currentTime === 0 && duration === 0) {
+    return 0;
+  }
+  return 100 * (currentTime / duration);
+};
 
 export default function Playbar() {
   const { state, dispatch } = useContext(StoreContext);
   const audioRef = useRef();
 
+  const { playing, songIndex, songs, currentTime, duration } = state;
+
   useEffect(() => {
-    if (state.playing) {
+    if (playing) {
       audioRef.current.play();
     } else {
       audioRef.current.pause();
     }
-  }, [state.playing, state.currentSong]);
+  }, [playing, songIndex]);
 
   return (
     <div className="playbar">
       <audio
         ref={audioRef}
-        src={`/audio/${state.currentSong.title}.mp3`}
+        src={`/audio/${songs[songIndex].title}.mp3`}
         onLoadedMetadata={() =>
           dispatch({
             type: 'SET_DURATION',
@@ -40,22 +46,42 @@ export default function Playbar() {
         onTimeUpdate={(e) =>
           dispatch({ type: 'SET_CURRENT_TIME', payload: e.target.currentTime })
         }
+        onEnded={() =>
+          dispatch({
+            type: 'NEXT_SONG',
+          })
+        }
       />
 
       <div className="time">
-        <div>{formatTime(Math.floor(state.currentTime))}</div>
-        <div>{formatTime(state.duration)}</div>
+        <div>{formatTime(Math.floor(currentTime))}</div>
+        <div>{formatTime(duration)}</div>
       </div>
 
-      <div className="progress">
+      <div
+        className="progress"
+        onClick={(e) => {
+          const { offsetLeft, offsetParent, offsetWidth } = e.target;
+          const pos =
+            (e.pageX - (offsetLeft + offsetParent.offsetLeft)) / offsetWidth;
+
+          audioRef.current.currentTime = pos * audioRef.current.duration;
+        }}
+      >
         <div
           className="progress-inner"
-          style={{ width: handleProgress(state.currentTime, state.duration) }}
+          style={{ width: `${handleProgress(currentTime, duration)}%` }}
         />
       </div>
 
       <div className="controls">
-        <button>
+        <button
+          onClick={() => {
+            dispatch({
+              type: 'PREV_SONG',
+            });
+          }}
+        >
           <i className="fa fa-backward" />
         </button>
 
@@ -63,18 +89,24 @@ export default function Playbar() {
           onClick={() => {
             dispatch({
               type: 'SET_PLAYING',
-              payload: state.playing ? false : true,
+              payload: playing ? false : true,
             });
           }}
         >
-          {state.playing ? (
+          {playing ? (
             <i className="fa fa-pause" />
           ) : (
             <i className="fa fa-play" />
           )}
         </button>
 
-        <button>
+        <button
+          onClick={() => {
+            dispatch({
+              type: 'NEXT_SONG',
+            });
+          }}
+        >
           <i className="fa fa-forward" />
         </button>
       </div>

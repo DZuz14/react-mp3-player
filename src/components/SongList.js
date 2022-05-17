@@ -4,7 +4,8 @@ import songs from '../songs.json';
 import './SongList.css';
 
 export default function SongList() {
-  const { dispatch } = useContext(StoreContext);
+  const { state, dispatch } = useContext(StoreContext);
+  const { songIndex } = state;
 
   return (
     <div className="song-list">
@@ -17,7 +18,14 @@ export default function SongList() {
             }}
           >
             <div>
-              <div className="title">{song.title}</div>
+              <div
+                className="title"
+                style={{
+                  color: songIndex === i ? '#FF4734' : 'white',
+                }}
+              >
+                {song.title}
+              </div>
               <div className="artist">{song.artist}</div>
             </div>
 
